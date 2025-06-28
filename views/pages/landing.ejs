@@ -1,0 +1,209 @@
+<%- include('../partials/header') %>
+
+<div class="landing-page">
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Welcome to <%= school ? school.name : 'Your School' %></h1>
+                <p class="hero-subtitle"><%= school ? school.motto : 'Excellence in Education' %></p>
+                <p class="hero-description">
+                    <%= school ? school.about : 'We are committed to providing quality education that prepares students for success in their academic and personal lives.' %>
+                </p>
+                <div class="hero-buttons">
+                    <a href="/login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login to Portal
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="<%= school && school.logo ? school.logo : '/images/default-logo.png' %>" alt="School Logo" class="school-logo">
+            </div>
+        </div>
+    </div>
+
+    <div class="features-section">
+        <div class="container">
+            <h2>Our Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Student Management</h3>
+                    <p>Comprehensive student registration, profile management, and academic tracking system.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Result Management</h3>
+                    <p>Efficient result entry, approval, and publishing system with automated grade calculations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>Staff Portal</h3>
+                    <p>Dedicated portals for teachers and administrators with role-based access control.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Responsive design that works perfectly on all devices - desktop, tablet, and mobile.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcements Section -->
+    <% if (announcements && announcements.length > 0) { %>
+    <div class="announcements-section">
+        <div class="container">
+            <h2>Latest Announcements</h2>
+            <div class="announcements-grid">
+                <% announcements.forEach(announcement => { %>
+                    <div class="announcement-card priority-<%= announcement.priority %>">
+                        <div class="announcement-header">
+                            <h3><%= announcement.title %></h3>
+                            <span class="announcement-priority"><%= announcement.priority %></span>
+                        </div>
+                        <p><%= announcement.content %></p>
+                        <small class="announcement-date">
+                            <%= new Date(announcement.createdAt).toLocaleDateString() %>
+                        </small>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (school) { %>
+    <div class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2>About Our School</h2>
+                    <div class="about-item">
+                        <h3>Our Mission</h3>
+                        <p><%= school.mission || 'To provide quality education that prepares students for success.' %></p>
+                    </div>
+                    <div class="about-item">
+                        <h3>Our Vision</h3>
+                        <p><%= school.vision || 'To be a leading educational institution in Nigeria.' %></p>
+                    </div>
+                    <% if (school.principalName) { %>
+                    <div class="about-item">
+                        <h3>Principal's Message</h3>
+                        <p><strong><%= school.principalName %></strong></p>
+                        <p><%= school.principalMessage || 'Welcome to our school community.' %></p>
+                    </div>
+                    <% } %>
+                </div>
+                <div class="about-contact">
+                    <h3>Contact Information</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span><%= school.address || 'School Address' %></span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span><%= school.phone || '+234-XXX-XXX-XXXX' %></span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span><%= school.email || 'info@school.edu.ng' %></span>
+                    </div>
+                    <% if (school.website) { %>
+                    <div class="contact-item">
+                        <i class="fas fa-globe"></i>
+                        <span><%= school.website %></span>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<style>
+.announcements-section {
+    padding: 4rem 0;
+    background: var(--light-gray);
+    color: var(--dark-gray);
+}
+
+.announcements-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--primary-color);
+}
+
+.announcements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.announcement-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+    border-left: 4px solid;
+    transition: transform 0.2s;
+}
+
+.announcement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.announcement-card.priority-low {
+    border-left-color: #6b7280;
+}
+
+.announcement-card.priority-normal {
+    border-left-color: #3b82f6;
+}
+
+.announcement-card.priority-high {
+    border-left-color: #f59e0b;
+}
+
+.announcement-card.priority-urgent {
+    border-left-color: #ef4444;
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.announcement-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.announcement-priority {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background: var(--primary-color);
+    color: var(--white);
+    text-transform: uppercase;
+}
+
+.announcement-date {
+    color: var(--secondary-color);
+    font-size: 0.875rem;
+}
+</style>
+
+<%- include('../partials/footer') %>
