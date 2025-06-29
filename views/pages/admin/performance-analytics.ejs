@@ -1,81 +1,57 @@
 <%- include('../../partials/header') %>
 
-<div class="analytics-dashboard">
-    <div class="dashboard-header">
-        <div class="header-content">
-            <h1 class="dashboard-title">
-                <span class="title-icon">📊</span>
-                Performance Analytics
-                <span class="title-glow"></span>
-            </h1>
+<div class="page-content">
+    <div class="page-header">
+        <h1>Performance Analytics</h1>
+        <% if (activeSession) { %>
             <div class="session-info">
-                <% if (activeSession) { %>
-                    <div class="session-chip">
-                        <i class="fas fa-calendar-alt"></i>
-                        <%= activeSession.sessionName %> - <%= activeSession.currentTerm %>
-                    </div>
-                <% } %>
+                <span class="session-badge">
+                    <%= activeSession.sessionName %> - <%= activeSession.currentTerm %>
+                </span>
             </div>
-        </div>
-        <div class="header-bg"></div>
+        <% } %>
     </div>
     
     <!-- Analytics Overview Cards -->
     <div class="analytics-overview">
-        <div class="overview-card card-primary">
-            <div class="card-background"></div>
-            <div class="card-content">
-                <div class="card-icon">
-                    <i class="fas fa-trophy"></i>
-                </div>
-                <div class="card-data">
-                    <h3><%= overallTopStudents.length %></h3>
-                    <p>Top Performers</p>
-                </div>
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-trophy"></i>
             </div>
-            <div class="card-glow"></div>
+            <div class="card-content">
+                <h3><%= overallTopStudents.length %></h3>
+                <p>Top Performers</p>
+            </div>
         </div>
         
-        <div class="overview-card card-secondary">
-            <div class="card-background"></div>
-            <div class="card-content">
-                <div class="card-icon">
-                    <i class="fas fa-school"></i>
-                </div>
-                <div class="card-data">
-                    <h3><%= classPerformance.length %></h3>
-                    <p>Active Classes</p>
-                </div>
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-school"></i>
             </div>
-            <div class="card-glow"></div>
+            <div class="card-content">
+                <h3><%= classPerformance.length %></h3>
+                <p>Active Classes</p>
+            </div>
         </div>
         
-        <div class="overview-card card-accent">
-            <div class="card-background"></div>
-            <div class="card-content">
-                <div class="card-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <div class="card-data">
-                    <h3><%= subjectPerformance.length %></h3>
-                    <p>Subjects Analyzed</p>
-                </div>
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-book"></i>
             </div>
-            <div class="card-glow"></div>
+            <div class="card-content">
+                <h3><%= subjectPerformance.length %></h3>
+                <p>Subjects Analyzed</p>
+            </div>
         </div>
         
-        <div class="overview-card card-success">
-            <div class="card-background"></div>
-            <div class="card-content">
-                <div class="card-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="card-data">
-                    <h3><%= classPerformance.length > 0 ? Math.round(classPerformance.reduce((sum, cls) => sum + cls.averageScore, 0) / classPerformance.length) : 0 %>%</h3>
-                    <p>School Average</p>
-                </div>
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-chart-line"></i>
             </div>
-            <div class="card-glow"></div>
+            <div class="card-content">
+                <h3><%= classPerformance.length > 0 ? Math.round(classPerformance.reduce((sum, cls) => sum + cls.averageScore, 0) / classPerformance.length) : 0 %>%</h3>
+                <p>School Average</p>
+            </div>
         </div>
     </div>
     
@@ -83,126 +59,71 @@
     <div class="charts-wrapper">
         <div class="charts-container">
             <!-- Term Performance Chart -->
-            <div class="chart-card futuristic-card">
+            <div class="chart-card">
                 <div class="card-header">
                     <div class="header-left">
                         <h3 class="chart-title">
-                            <span class="title-icon">🎯</span>
+                            <i class="fas fa-chart-bar"></i>
                             Top 10 Students by Term
                         </h3>
                         <p class="chart-subtitle">Interactive term-based performance analysis</p>
                     </div>
                     <div class="term-selector">
-                        <button class="term-btn active" data-term="First Term">
-                            <span>1st</span>
-                            <div class="btn-glow"></div>
-                        </button>
-                        <button class="term-btn" data-term="Second Term">
-                            <span>2nd</span>
-                            <div class="btn-glow"></div>
-                        </button>
-                        <button class="term-btn" data-term="Third Term">
-                            <span>3rd</span>
-                            <div class="btn-glow"></div>
-                        </button>
+                        <button class="term-btn active" data-term="First Term">1st Term</button>
+                        <button class="term-btn" data-term="Second Term">2nd Term</button>
+                        <button class="term-btn" data-term="Third Term">3rd Term</button>
                     </div>
                 </div>
                 <div class="chart-container">
                     <canvas id="termChart"></canvas>
-                    <div class="chart-overlay"></div>
-                </div>
-                <div class="card-footer">
-                    <div class="performance-indicator">
-                        <span class="indicator-dot"></span>
-                        <span>Real-time Performance Tracking</span>
-                    </div>
                 </div>
             </div>
             
             <!-- Overall Performance Chart -->
-            <div class="chart-card futuristic-card">
+            <div class="chart-card">
                 <div class="card-header">
                     <div class="header-left">
                         <h3 class="chart-title">
-                            <span class="title-icon">🏆</span>
+                            <i class="fas fa-trophy"></i>
                             Session Top Performers
                         </h3>
                         <p class="chart-subtitle">Overall academic excellence ranking</p>
                     </div>
-                    <div class="chart-stats">
-                        <div class="stat-item">
-                            <span class="stat-value"><%= overallTopStudents.length %></span>
-                            <span class="stat-label">Students</span>
-                        </div>
-                    </div>
                 </div>
                 <div class="chart-container">
                     <canvas id="overallChart"></canvas>
-                    <div class="chart-overlay"></div>
-                </div>
-                <div class="card-footer">
-                    <div class="performance-indicator">
-                        <span class="indicator-dot success"></span>
-                        <span>Cross-Subject Analysis</span>
-                    </div>
                 </div>
             </div>
             
             <!-- Class Performance Chart -->
-            <div class="chart-card futuristic-card">
+            <div class="chart-card">
                 <div class="card-header">
                     <div class="header-left">
                         <h3 class="chart-title">
-                            <span class="title-icon">🏫</span>
+                            <i class="fas fa-school"></i>
                             Class Performance Matrix
                         </h3>
                         <p class="chart-subtitle">Comparative class analytics</p>
                     </div>
-                    <div class="chart-stats">
-                        <div class="stat-item">
-                            <span class="stat-value"><%= classPerformance.length %></span>
-                            <span class="stat-label">Classes</span>
-                        </div>
-                    </div>
                 </div>
                 <div class="chart-container">
                     <canvas id="classChart"></canvas>
-                    <div class="chart-overlay"></div>
-                </div>
-                <div class="card-footer">
-                    <div class="performance-indicator">
-                        <span class="indicator-dot warning"></span>
-                        <span>Trend Analysis Active</span>
-                    </div>
                 </div>
             </div>
             
             <!-- Subject Performance Chart -->
-            <div class="chart-card futuristic-card">
+            <div class="chart-card">
                 <div class="card-header">
                     <div class="header-left">
                         <h3 class="chart-title">
-                            <span class="title-icon">📚</span>
+                            <i class="fas fa-book"></i>
                             Subject Performance Insights
                         </h3>
                         <p class="chart-subtitle">Multi-dimensional subject analysis</p>
                     </div>
-                    <div class="chart-stats">
-                        <div class="stat-item">
-                            <span class="stat-value"><%= subjectPerformance.length %></span>
-                            <span class="stat-label">Subjects</span>
-                        </div>
-                    </div>
                 </div>
                 <div class="chart-container">
                     <canvas id="subjectChart"></canvas>
-                    <div class="chart-overlay"></div>
-                </div>
-                <div class="card-footer">
-                    <div class="performance-indicator">
-                        <span class="indicator-dot info"></span>
-                        <span>Dual-Axis Visualization</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -212,10 +133,10 @@
     <div class="tables-wrapper">
         <div class="tables-container">
             <!-- Top Students Table -->
-            <div class="table-card futuristic-card">
+            <div class="table-card">
                 <div class="card-header">
                     <h3 class="table-title">
-                        <span class="title-icon">🌟</span>
+                        <i class="fas fa-star"></i>
                         Hall of Excellence
                     </h3>
                     <div class="table-actions">
@@ -226,56 +147,26 @@
                     </div>
                 </div>
                 <div class="table-container">
-                    <table class="futuristic-table">
+                    <table class="performance-table">
                         <thead>
                             <tr>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Rank</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Student</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Class</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Average Score</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Subjects</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
+                                <th>Rank</th>
+                                <th>Student</th>
+                                <th>Class</th>
+                                <th>Average Score</th>
+                                <th>Subjects</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% if (overallTopStudents.length > 0) { %>
                                 <% overallTopStudents.forEach((student, index) => { %>
-                                    <tr class="table-row">
+                                    <tr>
                                         <td>
                                             <div class="rank-badge rank-<%= index + 1 %>">
-                                                <span class="rank-number"><%= index + 1 %></span>
-                                                <div class="rank-glow"></div>
+                                                <%= index + 1 %>
                                             </div>
                                         </td>
-                                        <td>
-                                            <div class="student-info">
-                                                <span class="student-name"><%= student.studentName %></span>
-                                            </div>
-                                        </td>
+                                        <td class="student-name"><%= student.studentName %></td>
                                         <td>
                                             <span class="class-badge"><%= student.className %></span>
                                         </td>
@@ -287,18 +178,14 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <span class="subject-count"><%= student.totalSubjects %></span>
-                                        </td>
+                                        <td class="subject-count"><%= student.totalSubjects %></td>
                                     </tr>
                                 <% }) %>
                             <% } else { %>
                                 <tr>
                                     <td colspan="5" class="no-data">
-                                        <div class="no-data-content">
-                                            <i class="fas fa-chart-line"></i>
-                                            <span>No performance data available</span>
-                                        </div>
+                                        <i class="fas fa-chart-line"></i>
+                                        <span>No performance data available</span>
                                     </td>
                                 </tr>
                             <% } %>
@@ -308,10 +195,10 @@
             </div>
             
             <!-- Class Performance Table -->
-            <div class="table-card futuristic-card">
+            <div class="table-card">
                 <div class="card-header">
                     <h3 class="table-title">
-                        <span class="title-icon">🏫</span>
+                        <i class="fas fa-school"></i>
                         Class Performance Matrix
                     </h3>
                     <div class="table-actions">
@@ -322,42 +209,20 @@
                     </div>
                 </div>
                 <div class="table-container">
-                    <table class="futuristic-table">
+                    <table class="performance-table">
                         <thead>
                             <tr>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Class</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Average Score</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Students</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="th-content">
-                                        <span>Performance</span>
-                                        <i class="fas fa-sort"></i>
-                                    </div>
-                                </th>
+                                <th>Class</th>
+                                <th>Average Score</th>
+                                <th>Students</th>
+                                <th>Performance</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% if (classPerformance.length > 0) { %>
                                 <% classPerformance.forEach(cls => { %>
-                                    <tr class="table-row">
-                                        <td>
-                                            <span class="class-name"><%= cls._id %></span>
-                                        </td>
+                                    <tr>
+                                        <td class="class-name"><%= cls._id %></td>
                                         <td>
                                             <div class="score-display">
                                                 <span class="score-value"><%= Math.round(cls.averageScore * 100) / 100 %>%</span>
@@ -366,9 +231,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            <span class="student-count"><%= cls.studentCount %></span>
-                                        </td>
+                                        <td class="student-count"><%= cls.studentCount %></td>
                                         <td>
                                             <% 
                                                 let level = 'Poor';
@@ -379,8 +242,7 @@
                                                 else if (cls.averageScore >= 50) { level = 'Average'; levelClass = 'average'; }
                                             %>
                                             <span class="performance-badge <%= levelClass %>">
-                                                <span class="badge-text"><%= level %></span>
-                                                <div class="badge-glow"></div>
+                                                <%= level %>
                                             </span>
                                         </td>
                                     </tr>
@@ -388,10 +250,8 @@
                             <% } else { %>
                                 <tr>
                                     <td colspan="4" class="no-data">
-                                        <div class="no-data-content">
-                                            <i class="fas fa-school"></i>
-                                            <span>No class performance data available</span>
-                                        </div>
+                                        <i class="fas fa-school"></i>
+                                        <span>No class performance data available</span>
                                     </td>
                                 </tr>
                             <% } %>
@@ -407,430 +267,170 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-/* Dashboard Base Styles */
-.analytics-dashboard {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-    color: #ffffff;
-    overflow-x: hidden;
-    position: relative;
-}
-
-.analytics-dashboard::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Dashboard Header */
-.dashboard-header {
-    position: relative;
-    padding: 3rem 2rem;
-    background: linear-gradient(135deg, rgba(15, 15, 35, 0.9) 0%, rgba(26, 26, 46, 0.8) 100%);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-}
-
-.header-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent 0%, rgba(120, 119, 198, 0.1) 50%, transparent 100%);
-    animation: headerFlow 8s ease-in-out infinite;
-}
-
-@keyframes headerFlow {
-    0%, 100% { transform: translateX(-100%); }
-    50% { transform: translateX(100%); }
-}
-
-.header-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 2rem;
-}
-
-.dashboard-title {
-    font-size: 3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #7877c6 0%, #ff77c6 50%, #77dbff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 0;
-    animation: titleGlow 3s ease-in-out infinite;
-}
-
-@keyframes titleGlow {
-    0%, 100% { filter: brightness(1) drop-shadow(0 0 10px rgba(120, 119, 198, 0.5)); }
-    50% { filter: brightness(1.2) drop-shadow(0 0 20px rgba(120, 119, 198, 0.8)); }
-}
-
-.title-icon {
-    font-size: 2.5rem;
-    animation: iconFloat 2s ease-in-out infinite;
-}
-
-@keyframes iconFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
-
-.session-chip {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-}
-
-/* Overview Cards */
+/* Analytics Overview Cards */
 .analytics-overview {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    padding: 2rem;
-    position: relative;
-    z-index: 1;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .overview-card {
-    position: relative;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
+    background: white;
     padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-}
-
-.overview-card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-}
-
-.card-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.card-primary .card-background { background: linear-gradient(135deg, rgba(120, 119, 198, 0.2) 0%, rgba(255, 119, 198, 0.1) 100%); }
-.card-secondary .card-background { background: linear-gradient(135deg, rgba(255, 119, 198, 0.2) 0%, rgba(120, 219, 255, 0.1) 100%); }
-.card-accent .card-background { background: linear-gradient(135deg, rgba(120, 219, 255, 0.2) 0%, rgba(119, 255, 120, 0.1) 100%); }
-.card-success .card-background { background: linear-gradient(135deg, rgba(119, 255, 120, 0.2) 0%, rgba(255, 255, 119, 0.1) 100%); }
-
-.overview-card:hover .card-background {
-    opacity: 1;
-}
-
-.card-content {
-    position: relative;
-    z-index: 2;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid #f1f5f9;
+}
+
+.overview-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
 .card-icon {
     width: 70px;
     height: 70px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
     font-size: 2rem;
-    color: #ffffff;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.4s ease;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
-.overview-card:hover .card-icon {
-    transform: scale(1.1) rotate(10deg);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-}
-
-.card-data h3 {
+.card-content h3 {
     font-size: 2.5rem;
     font-weight: 800;
     margin: 0;
-    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #1e293b;
 }
 
-.card-data p {
+.card-content p {
     margin: 0;
-    color: rgba(255, 255, 255, 0.8);
+    color: #64748b;
     font-weight: 500;
-}
-
-.card-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.overview-card:hover .card-glow {
-    opacity: 1;
 }
 
 /* Charts Wrapper with Overflow */
 .charts-wrapper {
-    padding: 2rem;
-    position: relative;
-    z-index: 1;
+    margin-bottom: 3rem;
 }
 
 .charts-container {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 3rem;
-    max-height: none;
-    overflow: visible;
+    gap: 2rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
 }
 
 /* Chart Cards */
 .chart-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-}
-
-.chart-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
-    border-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid #f1f5f9;
+    min-width: 800px;
 }
 
 .card-header {
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .chart-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     margin: 0;
-    color: #ffffff;
+    color: #1e293b;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .chart-subtitle {
-    color: rgba(255, 255, 255, 0.6);
+    color: #64748b;
     margin: 0.5rem 0 0 0;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
 }
 
 .term-selector {
     display: flex;
     gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 0.5rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: white;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
 }
 
 .term-btn {
-    position: relative;
-    padding: 0.75rem 1.5rem;
+    padding: 0.5rem 1rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 0.375rem;
     background: transparent;
-    color: rgba(255, 255, 255, 0.7);
+    color: #64748b;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-weight: 600;
-    overflow: hidden;
+    font-weight: 500;
 }
 
 .term-btn.active,
 .term-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-}
-
-.btn-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(120, 119, 198, 0.3) 0%, rgba(255, 119, 198, 0.2) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.term-btn.active .btn-glow,
-.term-btn:hover .btn-glow {
-    opacity: 1;
-}
-
-.chart-stats {
-    display: flex;
-    gap: 1.5rem;
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-value {
-    display: block;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #ffffff;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
+    background: #1e293b;
+    color: white;
 }
 
 .chart-container {
-    padding: 2rem;
+    padding: 1.5rem;
     height: 400px;
     position: relative;
 }
 
-.chart-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.chart-card:hover .chart-overlay {
-    opacity: 1;
-}
-
-.card-footer {
-    padding: 1.5rem 2rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.performance-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-}
-
-.indicator-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #7877c6;
-    animation: pulse 2s infinite;
-}
-
-.indicator-dot.success { background: #77ff77; }
-.indicator-dot.warning { background: #ffff77; }
-.indicator-dot.info { background: #77dbff; }
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.2); }
-}
-
 /* Tables Wrapper with Overflow */
 .tables-wrapper {
-    padding: 2rem;
-    position: relative;
-    z-index: 1;
+    margin-bottom: 2rem;
 }
 
 .tables-container {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2rem;
     overflow-x: auto;
     padding-bottom: 1rem;
 }
 
 /* Table Cards */
 .table-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    transition: all 0.4s ease;
-    min-width: 800px;
-}
-
-.table-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+    border: 1px solid #f1f5f9;
+    min-width: 700px;
 }
 
 .table-title {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: 700;
     margin: 0;
-    color: #ffffff;
+    color: #1e293b;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 .table-actions {
@@ -839,111 +439,93 @@
 }
 
 .action-btn {
-    padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    color: #ffffff;
+    padding: 0.5rem 1rem;
+    background: #1e293b;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-weight: 500;
 }
 
 .action-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    background: #334155;
+    transform: translateY(-1px);
 }
 
 .table-container {
     overflow-x: auto;
-    max-height: 600px;
+    max-height: 500px;
     overflow-y: auto;
 }
 
-.futuristic-table {
+.performance-table {
     width: 100%;
     border-collapse: collapse;
-    color: #ffffff;
+    color: #1e293b;
 }
 
-.futuristic-table th {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 1.5rem 1rem;
+.performance-table th {
+    background: #f8fafc;
+    padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: #374151;
     position: sticky;
     top: 0;
     z-index: 10;
 }
 
-.th-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.futuristic-table td {
-    padding: 1.5rem 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+.performance-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
     transition: all 0.3s ease;
 }
 
-.table-row:hover {
-    background: rgba(255, 255, 255, 0.03);
-    transform: scale(1.01);
+.performance-table tbody tr:hover {
+    background: #f8fafc;
 }
 
 .rank-badge {
-    position: relative;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    color: #ffffff;
-    overflow: hidden;
+    color: white;
 }
 
 .rank-1 { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #000; }
 .rank-2 { background: linear-gradient(135deg, #c0c0c0 0%, #e5e5e5 100%); color: #000; }
 .rank-3 { background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%); }
 .rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) { 
-    background: linear-gradient(135deg, #7877c6 0%, #a855f7 100%); 
-}
-
-.rank-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.rank-badge:hover .rank-glow {
-    opacity: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
 }
 
 .student-name {
     font-weight: 600;
-    color: #ffffff;
+    color: #1e293b;
+}
+
+.class-name {
+    font-weight: 600;
+    color: #1e293b;
 }
 
 .class-badge {
-    background: rgba(120, 119, 198, 0.3);
-    color: #ffffff;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-weight: 600;
-    border: 1px solid rgba(120, 119, 198, 0.5);
+    background: #e0e7ff;
+    color: #3730a3;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-weight: 500;
+    font-size: 0.875rem;
 }
 
 .score-display {
@@ -953,97 +535,98 @@
 }
 
 .score-value {
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.1rem;
-    color: #ffffff;
+    color: #1e293b;
 }
 
 .score-bar {
-    width: 100px;
+    width: 80px;
     height: 6px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #e2e8f0;
     border-radius: 3px;
     overflow: hidden;
 }
 
 .score-fill {
     height: 100%;
-    background: linear-gradient(90deg, #7877c6 0%, #ff77c6 50%, #77dbff 100%);
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
     border-radius: 3px;
     transition: width 0.8s ease;
 }
 
-.performance-badge {
-    position: relative;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+.subject-count,
+.student-count {
     font-weight: 600;
-    overflow: hidden;
-    display: inline-block;
+    color: #64748b;
 }
 
-.performance-badge.excellent { background: rgba(119, 255, 120, 0.2); color: #77ff77; border: 1px solid rgba(119, 255, 120, 0.5); }
-.performance-badge.very-good { background: rgba(120, 219, 255, 0.2); color: #77dbff; border: 1px solid rgba(120, 219, 255, 0.5); }
-.performance-badge.good { background: rgba(255, 255, 119, 0.2); color: #ffff77; border: 1px solid rgba(255, 255, 119, 0.5); }
-.performance-badge.average { background: rgba(255, 165, 0, 0.2); color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.5); }
-.performance-badge.poor { background: rgba(255, 119, 119, 0.2); color: #ff7777; border: 1px solid rgba(255, 119, 119, 0.5); }
-
-.badge-glow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.performance-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
-.performance-badge:hover .badge-glow {
-    opacity: 1;
-}
+.performance-badge.excellent { background: #d1fae5; color: #065f46; }
+.performance-badge.very-good { background: #dbeafe; color: #1e40af; }
+.performance-badge.good { background: #fef3c7; color: #92400e; }
+.performance-badge.average { background: #fed7aa; color: #9a3412; }
+.performance-badge.poor { background: #fee2e2; color: #991b1b; }
 
 .no-data {
     text-align: center;
-    padding: 3rem;
-}
-
-.no-data-content {
+    padding: 2rem;
+    color: #64748b;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    color: rgba(255, 255, 255, 0.5);
+    gap: 0.5rem;
 }
 
-.no-data-content i {
-    font-size: 3rem;
+.no-data i {
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+/* Custom Scrollbars */
+.charts-container::-webkit-scrollbar,
+.tables-container::-webkit-scrollbar,
+.table-container::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.charts-container::-webkit-scrollbar-track,
+.tables-container::-webkit-scrollbar-track,
+.table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.charts-container::-webkit-scrollbar-thumb,
+.tables-container::-webkit-scrollbar-thumb,
+.table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.charts-container::-webkit-scrollbar-thumb:hover,
+.tables-container::-webkit-scrollbar-thumb:hover,
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-    .charts-container {
-        grid-template-columns: 1fr;
-    }
-    
+@media (max-width: 768px) {
     .analytics-overview {
         grid-template-columns: repeat(2, 1fr);
     }
-}
-
-@media (max-width: 768px) {
-    .dashboard-title {
-        font-size: 2rem;
-    }
     
-    .analytics-overview {
-        grid-template-columns: 1fr;
-        padding: 1rem;
-    }
-    
-    .charts-wrapper,
-    .tables-wrapper {
-        padding: 1rem;
+    .overview-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
     }
     
     .card-header {
@@ -1060,82 +643,30 @@
         height: 300px;
         padding: 1rem;
     }
-    
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-    }
 }
 
 @media (max-width: 480px) {
     .analytics-overview {
         grid-template-columns: 1fr;
     }
-    
-    .overview-card {
-        padding: 1.5rem;
-    }
-    
-    .card-content {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-    
-    .dashboard-title {
-        font-size: 1.5rem;
-        flex-direction: column;
-    }
-}
-
-/* Custom Scrollbars */
-.tables-container::-webkit-scrollbar,
-.table-container::-webkit-scrollbar {
-    height: 8px;
-    width: 8px;
-}
-
-.tables-container::-webkit-scrollbar-track,
-.table-container::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-}
-
-.tables-container::-webkit-scrollbar-thumb,
-.table-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #7877c6 0%, #ff77c6 100%);
-    border-radius: 4px;
-}
-
-.tables-container::-webkit-scrollbar-thumb:hover,
-.table-container::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #9d9cdb 0%, #ff9dd6 100%);
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Chart.js configuration with futuristic theme
+    // Chart.js configuration
     Chart.defaults.font.family = "'Inter', 'Segoe UI', sans-serif";
-    Chart.defaults.color = '#ffffff';
-    Chart.defaults.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+    Chart.defaults.color = '#64748b';
     
-    // Futuristic color palette
+    // Color palette
     const colors = [
-        '#7877c6', '#ff77c6', '#77dbff', '#77ff77', '#ffff77',
-        '#ff7777', '#c677ff', '#77ffc6', '#ffc677', '#c6ff77'
+        '#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe',
+        '#43e97b', '#38f9d7', '#ffecd2', '#fcb69f', '#a8edea', '#fed6e3'
     ];
-    
-    const gradientColors = colors.map((color, index) => {
-        return {
-            start: color,
-            end: color + '40'
-        };
-    });
     
     let termChart, overallChart, classChart, subjectChart;
     
-    // Initialize charts with enhanced animations
+    // Initialize charts
     initializeTermChart('First Term');
     initializeOverallChart();
     initializeClassChart();
@@ -1167,10 +698,6 @@ document.addEventListener('DOMContentLoaded', function() {
             termChart.destroy();
         }
         
-        const backgroundGradients = data.labels.map((_, index) => {
-            return createGradient(ctx, colors[index % colors.length], colors[index % colors.length] + '20');
-        });
-        
         termChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -1178,13 +705,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Average Score (%)',
                     data: data.scores,
-                    backgroundColor: backgroundGradients,
+                    backgroundColor: colors.slice(0, data.labels.length),
                     borderColor: colors.slice(0, data.labels.length),
                     borderWidth: 2,
-                    borderRadius: 12,
+                    borderRadius: 8,
                     borderSkipped: false,
-                    hoverBackgroundColor: colors.slice(0, data.labels.length),
-                    hoverBorderWidth: 3,
                 }]
             },
             options: {
@@ -1192,19 +717,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(15, 15, 35, 0.9)',
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
                         titleColor: '#ffffff',
                         bodyColor: '#ffffff',
-                        borderColor: '#7877c6',
-                        borderWidth: 2,
-                        cornerRadius: 12,
-                        displayColors: false,
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        displayColors: true,
                         callbacks: {
                             label: function(context) {
-                                return `Score: ${Math.round(context.parsed.y * 100) / 100}%`;
+                                return `${context.dataset.label}: ${Math.round(context.parsed.y * 100) / 100}%`;
                             }
                         }
                     }
@@ -1214,11 +744,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         beginAtZero: true,
                         max: 100,
                         grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
+                            color: '#f1f5f9',
                             drawBorder: false
                         },
                         ticks: {
-                            color: '#ffffff',
+                            color: '#64748b',
                             callback: function(value) {
                                 return value + '%';
                             }
@@ -1229,18 +759,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             display: false
                         },
                         ticks: {
-                            color: '#ffffff'
+                            color: '#64748b'
                         }
                     }
                 },
                 animation: {
-                    duration: 1200,
-                    easing: 'easeInOutCubic',
-                    delay: (context) => context.dataIndex * 100
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
                 }
             }
         });
@@ -1248,15 +773,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateTermChart(term) {
         const data = getTermData(term);
-        const ctx = termChart.ctx;
-        
-        const backgroundGradients = data.labels.map((_, index) => {
-            return createGradient(ctx, colors[index % colors.length], colors[index % colors.length] + '20');
-        });
         
         termChart.data.labels = data.labels;
         termChart.data.datasets[0].data = data.scores;
-        termChart.data.datasets[0].backgroundColor = backgroundGradients;
+        termChart.data.datasets[0].backgroundColor = colors.slice(0, data.labels.length);
         termChart.data.datasets[0].borderColor = colors.slice(0, data.labels.length);
         termChart.update('active');
     }
@@ -1282,9 +802,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: students.map(s => Math.round(s.averageScore * 100) / 100),
                     backgroundColor: colors.slice(0, students.length),
-                    borderColor: '#0f0f23',
-                    borderWidth: 4,
-                    hoverBorderWidth: 6,
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
                     hoverOffset: 10
                 }]
             },
@@ -1297,8 +816,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         position: 'bottom',
                         labels: {
                             usePointStyle: true,
-                            padding: 20,
-                            color: '#ffffff',
+                            padding: 15,
                             generateLabels: function(chart) {
                                 const data = chart.data;
                                 return data.labels.map((label, i) => ({
@@ -1311,12 +829,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(15, 15, 35, 0.9)',
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
                         titleColor: '#ffffff',
                         bodyColor: '#ffffff',
-                        borderColor: '#7877c6',
-                        borderWidth: 2,
-                        cornerRadius: 12,
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8,
                         callbacks: {
                             label: function(context) {
                                 return `${context.label}: ${context.parsed}%`;
@@ -1326,8 +844,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 animation: {
                     animateRotate: true,
-                    duration: 1500,
-                    easing: 'easeInOutCubic'
+                    duration: 1200
                 }
             }
         });
@@ -1337,8 +854,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('classChart').getContext('2d');
         const classes = <%- JSON.stringify(classPerformance) %>;
         
-        const gradient = createGradient(ctx, '#7877c6', '#ff77c6');
-        
         classChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -1346,17 +861,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Average Score (%)',
                     data: classes.map(c => Math.round(c.averageScore * 100) / 100),
-                    borderColor: '#7877c6',
-                    backgroundColor: gradient,
-                    borderWidth: 4,
+                    borderColor: '#667eea',
+                    backgroundColor: createGradient(ctx, '#667eea20', '#667eea05'),
+                    borderWidth: 3,
                     fill: true,
                     tension: 0.4,
                     pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#7877c6',
+                    pointBorderColor: '#667eea',
                     pointBorderWidth: 3,
-                    pointRadius: 8,
-                    pointHoverRadius: 12,
-                    pointHoverBackgroundColor: '#7877c6',
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: '#667eea',
                     pointHoverBorderColor: '#ffffff'
                 }]
             },
@@ -1365,15 +880,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: true,
+                        position: 'top'
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(15, 15, 35, 0.9)',
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
                         titleColor: '#ffffff',
                         bodyColor: '#ffffff',
-                        borderColor: '#7877c6',
-                        borderWidth: 2,
-                        cornerRadius: 12,
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8,
                         callbacks: {
                             label: function(context) {
                                 return `Average: ${context.parsed.y}%`;
@@ -1386,11 +902,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         beginAtZero: true,
                         max: 100,
                         grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
+                            color: '#f1f5f9',
                             drawBorder: false
                         },
                         ticks: {
-                            color: '#ffffff',
+                            color: '#64748b',
                             callback: function(value) {
                                 return value + '%';
                             }
@@ -1401,13 +917,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             display: false
                         },
                         ticks: {
-                            color: '#ffffff'
+                            color: '#64748b'
                         }
                     }
                 },
                 animation: {
-                    duration: 1500,
-                    easing: 'easeInOutCubic'
+                    duration: 1200,
+                    easing: 'easeInOutQuart'
                 }
             }
         });
@@ -1425,19 +941,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     {
                         label: 'Average Score (%)',
                         data: subjects.map(s => Math.round(s.averageScore * 100) / 100),
-                        backgroundColor: createGradient(ctx, '#7877c6', '#7877c640'),
-                        borderColor: '#7877c6',
+                        backgroundColor: '#667eea',
+                        borderColor: '#667eea',
                         borderWidth: 2,
-                        borderRadius: 8,
+                        borderRadius: 6,
                         yAxisID: 'y'
                     },
                     {
                         label: 'Pass Rate (%)',
                         data: subjects.map(s => Math.round(s.passRate * 10000) / 100),
-                        backgroundColor: createGradient(ctx, '#ff77c6', '#ff77c640'),
-                        borderColor: '#ff77c6',
+                        backgroundColor: '#764ba2',
+                        borderColor: '#764ba2',
                         borderWidth: 2,
-                        borderRadius: 8,
+                        borderRadius: 6,
                         yAxisID: 'y1'
                     }
                 ]
@@ -1450,17 +966,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         position: 'top',
                         labels: {
                             usePointStyle: true,
-                            padding: 20,
-                            color: '#ffffff'
+                            padding: 20
                         }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(15, 15, 35, 0.9)',
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
                         titleColor: '#ffffff',
                         bodyColor: '#ffffff',
-                        borderColor: '#7877c6',
-                        borderWidth: 2,
-                        cornerRadius: 12
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8
                     }
                 },
                 scales: {
@@ -1471,11 +986,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         beginAtZero: true,
                         max: 100,
                         grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
+                            color: '#f1f5f9',
                             drawBorder: false
                         },
                         ticks: {
-                            color: '#ffffff',
+                            color: '#64748b',
                             callback: function(value) {
                                 return value + '%';
                             }
@@ -1491,7 +1006,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             drawOnChartArea: false,
                         },
                         ticks: {
-                            color: '#ffffff',
+                            color: '#64748b',
                             callback: function(value) {
                                 return value + '%';
                             }
@@ -1502,14 +1017,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             display: false
                         },
                         ticks: {
-                            color: '#ffffff'
+                            color: '#64748b'
                         }
                     }
                 },
                 animation: {
-                    duration: 1200,
-                    easing: 'easeInOutCubic',
-                    delay: (context) => context.dataIndex * 50
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
                 }
             }
         });
