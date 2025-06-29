@@ -416,6 +416,54 @@ router.post('/promote', async (req, res) => {
   }
 });
 
+// View Passed Out Students - NEW
+router.get('/passed-out-students', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+    
+    // Build filter
+    const filter = {};
+    if (req.query.year) filter.passedOutYear = parseInt(req.query.year);
+    if (req.query.class) filter.passedOutFromClass = req.query.class;
+    if (req.query.session) filter.passedOutFromSession = req.query.session;
+    if (req.query.search) {
+      filter.$or = [
+        { fullName: { $regex: req.query.search, $options: 'i' } },
+        { studentID: { $regex: req.query.search, $options: 'i' } }
+      ];
+    }
+    
+    const passedOutStudents = await PassedOutStudent.find(filter)
+      .sort({ passedOutDate: -1 })
+      .skip(skip)
+      .limit(limit);
+    
+    const totalStudents = await PassedOutStudent.countDocuments(filter);
+    const totalPages = Math.ceil(totalStudents / limit);
+    
+    // Get unique values for filters
+    const availableYears = await PassedOutStudent.distinct('passedOutYear');
+    const availableClasses = await PassedOutStudent.distinct('passedOutFromClass');
+    const availableSessions = await PassedOutStudent.distinct('passedOutFromSession');
+    
+    res.render('pages/admin/passed-out-students', {
+      title: 'Passed Out Students',
+      passedOutStudents,
+      availableYears: availableYears.sort((a, b) => b - a), // Sort years descending
+      availableClasses: availableClasses.sort(),
+      availableSessions: availableSessions.sort(),
+      currentPage: page,
+      totalPages,
+      query: req.query
+    });
+  } catch (error) {
+    console.error('Error loading passed out students:', error);
+    res.render('pages/error', { title: 'Error', message: 'Unable to load passed out students', error });
+  }
+});
+
 // Manage Staff
 router.get('/staff', async (req, res) => {
   try {
