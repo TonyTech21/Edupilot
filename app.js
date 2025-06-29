@@ -26,6 +26,7 @@ require('./models/Class');
 require('./models/Session');
 require('./models/School');
 require('./models/PracticeQuestion');
+require('./models/PassedOutStudent');
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));

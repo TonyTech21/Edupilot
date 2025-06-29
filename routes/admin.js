@@ -7,6 +7,7 @@ const Session = require('../models/Session');
 const School = require('../models/School');
 const Result = require('../models/Result');
 const Announcement = require('../models/Announcement');
+const PassedOutStudent = require('../models/PassedOutStudent');
 const { requireAuth, requireRole } = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
@@ -238,6 +239,180 @@ router.post('/students/reset-password/:id', async (req, res) => {
   } catch (error) {
     console.error('Error resetting password:', error);
     res.status(500).json({ success: false, message: 'Failed to reset password' });
+  }
+});
+
+// Promote Students Page - NEW
+router.get('/promote', async (req, res) => {
+  try {
+    const activeSession = await Session.getActiveSession();
+    const classes = await Class.find({ isActive: true }).sort({ className: 1 });
+    
+    // Check if current term is Third Term
+    const isThirdTerm = activeSession && activeSession.currentTerm === 'Third Term';
+    
+    let students = [];
+    let studentsWithAverages = [];
+    const selectedClass = req.query.class;
+    
+    if (selectedClass && isThirdTerm) {
+      // Get students in the selected class
+      students = await Student.find({
+        currentClass: selectedClass,
+        isActive: true
+      }).sort({ fullName: 1 });
+      
+      // Calculate overall averages for each student
+      studentsWithAverages = await Promise.all(students.map(async (student) => {
+        // Get all approved results for this student in the current session
+        const results = await Result.find({
+          studentID: student.studentID,
+          session: activeSession.sessionName,
+          status: 'approved'
+        });
+        
+        // Calculate overall average across all terms and subjects
+        let totalMarks = 0;
+        let totalSubjects = 0;
+        
+        results.forEach(result => {
+          totalMarks += result.total;
+          totalSubjects++;
+        });
+        
+        const overallAverage = totalSubjects > 0 ? (totalMarks / totalSubjects).toFixed(2) : 0;
+        
+        return {
+          ...student.toObject(),
+          overallAverage: parseFloat(overallAverage)
+        };
+      }));
+    }
+    
+    res.render('pages/admin/promote', {
+      title: 'Promote Students',
+      classes,
+      students: studentsWithAverages,
+      selectedClass,
+      activeSession,
+      isThirdTerm
+    });
+  } catch (error) {
+    console.error('Error loading promote page:', error);
+    res.render('pages/error', { title: 'Error', message: 'Unable to load promote page', error });
+  }
+});
+
+// Process Student Promotion - NEW
+router.post('/promote', async (req, res) => {
+  try {
+    const { selectedStudents, newClass } = req.body;
+    const activeSession = await Session.getActiveSession();
+    
+    if (!activeSession || activeSession.currentTerm !== 'Third Term') {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Student promotion is only allowed during Third Term' 
+      });
+    }
+    
+    if (!selectedStudents || selectedStudents.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please select at least one student to promote' 
+      });
+    }
+    
+    if (!newClass) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Please select a destination class' 
+      });
+    }
+    
+    const studentIds = Array.isArray(selectedStudents) ? selectedStudents : [selectedStudents];
+    let promotedCount = 0;
+    let passedOutCount = 0;
+    
+    for (const studentId of studentIds) {
+      const student = await Student.findById(studentId);
+      if (!student) continue;
+      
+      // Calculate overall average for this student
+      const results = await Result.find({
+        studentID: student.studentID,
+        session: activeSession.sessionName,
+        status: 'approved'
+      });
+      
+      let totalMarks = 0;
+      let totalSubjects = 0;
+      
+      results.forEach(result => {
+        totalMarks += result.total;
+        totalSubjects++;
+      });
+      
+      const overallAverage = totalSubjects > 0 ? (totalMarks / totalSubjects) : 0;
+      
+      if (newClass === 'Passing Out') {
+        // Move student to PassedOutStudent collection
+        const passedOutData = {
+          fullName: student.fullName,
+          studentID: student.studentID,
+          gender: student.gender,
+          dateOfBirth: student.dateOfBirth,
+          parentPhone: student.parentPhone,
+          parentEmail: student.parentEmail,
+          address: student.address,
+          passportURL: student.passportURL,
+          passedOutFromClass: student.currentClass,
+          passedOutFromSession: student.currentSession,
+          passedOutYear: new Date().getFullYear(),
+          overallAverage: overallAverage,
+          archivedSessions: student.archivedSessions,
+          admissionDate: student.admissionDate
+        };
+        
+        await PassedOutStudent.create(passedOutData);
+        
+        // Deactivate the student
+        await Student.findByIdAndUpdate(studentId, { isActive: false });
+        
+        passedOutCount++;
+      } else {
+        // Regular promotion
+        // Add current session to archived sessions
+        const archivedSession = {
+          sessionName: student.currentSession,
+          className: student.currentClass,
+          promoted: true,
+          promotionDate: new Date()
+        };
+        
+        // Update student with new class and archive current session
+        await Student.findByIdAndUpdate(studentId, {
+          currentClass: newClass,
+          $push: { archivedSessions: archivedSession }
+        });
+        
+        promotedCount++;
+      }
+    }
+    
+    let message = '';
+    if (promotedCount > 0 && passedOutCount > 0) {
+      message = `${promotedCount} students promoted and ${passedOutCount} students passed out successfully`;
+    } else if (promotedCount > 0) {
+      message = `${promotedCount} students promoted successfully`;
+    } else if (passedOutCount > 0) {
+      message = `${passedOutCount} students passed out successfully`;
+    }
+    
+    res.json({ success: true, message });
+  } catch (error) {
+    console.error('Error promoting students:', error);
+    res.status(500).json({ success: false, message: 'Failed to promote students' });
   }
 });
 
