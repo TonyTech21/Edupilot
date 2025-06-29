@@ -1,0 +1,712 @@
+<%- include('../../partials/header') %>
+
+<div class="page-content">
+    <div class="page-header">
+        <h1>Performance Analytics</h1>
+        <div class="session-info">
+            <% if (activeSession) { %>
+                <span class="session-badge">
+                    <%= activeSession.sessionName %> - <%= activeSession.currentTerm %>
+                </span>
+            <% } %>
+        </div>
+    </div>
+    
+    <!-- Analytics Overview Cards -->
+    <div class="analytics-overview">
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <div class="card-content">
+                <h3><%= overallTopStudents.length %></h3>
+                <p>Top Performers</p>
+            </div>
+        </div>
+        
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-school"></i>
+            </div>
+            <div class="card-content">
+                <h3><%= classPerformance.length %></h3>
+                <p>Active Classes</p>
+            </div>
+        </div>
+        
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <div class="card-content">
+                <h3><%= subjectPerformance.length %></h3>
+                <p>Subjects Analyzed</p>
+            </div>
+        </div>
+        
+        <div class="overview-card">
+            <div class="card-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="card-content">
+                <h3><%= classPerformance.length > 0 ? Math.round(classPerformance.reduce((sum, cls) => sum + cls.averageScore, 0) / classPerformance.length) : 0 %>%</h3>
+                <p>School Average</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="charts-container">
+        <!-- Term Performance Charts -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2>Top 10 Students by Term</h2>
+                <div class="term-selector">
+                    <button class="term-btn active" data-term="First Term">First Term</button>
+                    <button class="term-btn" data-term="Second Term">Second Term</button>
+                    <button class="term-btn" data-term="Third Term">Third Term</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="termChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Overall Performance Chart -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2>Top 10 Students Overall (Session)</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="overallChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Class Performance Chart -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2>Class Performance Comparison</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="classChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Subject Performance Chart -->
+        <div class="chart-section">
+            <div class="chart-header">
+                <h2>Subject Performance Analysis</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="subjectChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance Tables -->
+    <div class="performance-tables">
+        <!-- Top Students Table -->
+        <div class="table-section">
+            <h2>Overall Top Performers</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Student Name</th>
+                            <th>Class</th>
+                            <th>Average Score</th>
+                            <th>Total Subjects</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (overallTopStudents.length > 0) { %>
+                            <% overallTopStudents.forEach((student, index) => { %>
+                                <tr>
+                                    <td>
+                                        <span class="rank-badge rank-<%= index + 1 %>">
+                                            <%= index + 1 %>
+                                        </span>
+                                    </td>
+                                    <td><%= student.studentName %></td>
+                                    <td><%= student.className %></td>
+                                    <td class="score-cell">
+                                        <%= Math.round(student.averageScore * 100) / 100 %>%
+                                    </td>
+                                    <td><%= student.totalSubjects %></td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" class="text-center">No performance data available</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Class Performance Table -->
+        <div class="table-section">
+            <h2>Class Performance Summary</h2>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Average Score</th>
+                            <th>Student Count</th>
+                            <th>Performance Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (classPerformance.length > 0) { %>
+                            <% classPerformance.forEach(cls => { %>
+                                <tr>
+                                    <td><%= cls._id %></td>
+                                    <td class="score-cell">
+                                        <%= Math.round(cls.averageScore * 100) / 100 %>%
+                                    </td>
+                                    <td><%= cls.studentCount %></td>
+                                    <td>
+                                        <% 
+                                            let level = 'Poor';
+                                            let levelClass = 'poor';
+                                            if (cls.averageScore >= 80) { level = 'Excellent'; levelClass = 'excellent'; }
+                                            else if (cls.averageScore >= 70) { level = 'Very Good'; levelClass = 'very-good'; }
+                                            else if (cls.averageScore >= 60) { level = 'Good'; levelClass = 'good'; }
+                                            else if (cls.averageScore >= 50) { level = 'Average'; levelClass = 'average'; }
+                                        %>
+                                        <span class="performance-badge <%= levelClass %>">
+                                            <%= level %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="4" class="text-center">No class performance data available</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.analytics-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.overview-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.overview-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.card-content h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.card-content p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.charts-container {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.chart-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-header h2 {
+    color: #1e293b;
+    margin: 0;
+}
+
+.term-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.term-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.term-btn.active,
+.term-btn:hover {
+    background: #1e293b;
+    color: white;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+.performance-tables {
+    display: grid;
+    gap: 2rem;
+}
+
+.table-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.table-section h2 {
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+}
+
+.rank-1 { background: #ffd700; color: #1e293b; }
+.rank-2 { background: #c0c0c0; color: #1e293b; }
+.rank-3 { background: #cd7f32; color: white; }
+.rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) { 
+    background: #64748b; 
+}
+
+.score-cell {
+    font-weight: bold;
+    color: #1e293b;
+}
+
+.performance-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.performance-badge.excellent { background: #d1fae5; color: #065f46; }
+.performance-badge.very-good { background: #dbeafe; color: #1e40af; }
+.performance-badge.good { background: #fef3c7; color: #92400e; }
+.performance-badge.average { background: #fed7aa; color: #9a3412; }
+.performance-badge.poor { background: #fee2e2; color: #991b1b; }
+
+@media (max-width: 768px) {
+    .chart-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .term-selector {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Chart.js configuration
+    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    Chart.defaults.color = '#64748b';
+    
+    // Color palette
+    const colors = [
+        '#667eea', '#764ba2', '#f093fb', '#f5576c',
+        '#4facfe', '#00f2fe', '#43e97b', '#38f9d7',
+        '#ffecd2', '#fcb69f', '#a8edea', '#fed6e3'
+    ];
+    
+    let termChart, overallChart, classChart, subjectChart;
+    
+    // Initialize charts
+    initializeTermChart('First Term');
+    initializeOverallChart();
+    initializeClassChart();
+    initializeSubjectChart();
+    
+    // Term selector functionality
+    document.querySelectorAll('.term-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.term-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const term = this.dataset.term;
+            updateTermChart(term);
+        });
+    });
+    
+    function initializeTermChart(term) {
+        const ctx = document.getElementById('termChart').getContext('2d');
+        const data = getTermData(term);
+        
+        if (termChart) {
+            termChart.destroy();
+        }
+        
+        termChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Average Score (%)',
+                    data: data.scores,
+                    backgroundColor: colors.slice(0, data.labels.length),
+                    borderColor: colors.slice(0, data.labels.length),
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return `Score: ${Math.round(context.parsed.y * 100) / 100}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+    
+    function updateTermChart(term) {
+        const data = getTermData(term);
+        termChart.data.labels = data.labels;
+        termChart.data.datasets[0].data = data.scores;
+        termChart.data.datasets[0].backgroundColor = colors.slice(0, data.labels.length);
+        termChart.data.datasets[0].borderColor = colors.slice(0, data.labels.length);
+        termChart.update('active');
+    }
+    
+    function getTermData(term) {
+        const termData = <%- JSON.stringify(termAnalytics) %>;
+        const students = termData[term] || [];
+        
+        return {
+            labels: students.map(s => s.studentName),
+            scores: students.map(s => Math.round(s.averageScore * 100) / 100)
+        };
+    }
+    
+    function initializeOverallChart() {
+        const ctx = document.getElementById('overallChart').getContext('2d');
+        const students = <%- JSON.stringify(overallTopStudents) %>;
+        
+        overallChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: students.map(s => s.studentName),
+                datasets: [{
+                    data: students.map(s => Math.round(s.averageScore * 100) / 100),
+                    backgroundColor: colors.slice(0, students.length),
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
+                    hoverBorderWidth: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                return data.labels.map((label, i) => ({
+                                    text: `${label} (${data.datasets[0].data[i]}%)`,
+                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                    strokeStyle: data.datasets[0].backgroundColor[i],
+                                    pointStyle: 'circle'
+                                }));
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.parsed}%`;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    duration: 1500,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+    
+    function initializeClassChart() {
+        const ctx = document.getElementById('classChart').getContext('2d');
+        const classes = <%- JSON.stringify(classPerformance) %>;
+        
+        classChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: classes.map(c => c._id),
+                datasets: [{
+                    label: 'Average Score (%)',
+                    data: classes.map(c => Math.round(c.averageScore * 100) / 100),
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return `Average: ${context.parsed.y}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+    
+    function initializeSubjectChart() {
+        const ctx = document.getElementById('subjectChart').getContext('2d');
+        const subjects = <%- JSON.stringify(subjectPerformance) %>;
+        
+        subjectChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: subjects.map(s => s._id),
+                datasets: [
+                    {
+                        label: 'Average Score (%)',
+                        data: subjects.map(s => Math.round(s.averageScore * 100) / 100),
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: '#667eea',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Pass Rate (%)',
+                        data: subjects.map(s => Math.round(s.passRate * 10000) / 100),
+                        backgroundColor: 'rgba(118, 75, 162, 0.8)',
+                        borderColor: '#764ba2',
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: '#667eea',
+                        borderWidth: 1,
+                        cornerRadius: 8
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+});
+</script>
+
+<%- include('../../partials/footer') %>

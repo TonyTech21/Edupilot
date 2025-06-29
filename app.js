@@ -15,6 +15,8 @@ const teacherRoutes = require('./routes/teacher');
 const studentRoutes = require('./routes/student');
 const resultRoutes = require('./routes/result');
 const dashboardRoutes = require('./routes/dashboard');
+const analyticsRoutes = require('./routes/analytics');
+const practiceRoutes = require('./routes/practice');
 
 // Import Models
 require('./models/User');
@@ -23,6 +25,7 @@ require('./models/Result');
 require('./models/Class');
 require('./models/Session');
 require('./models/School');
+require('./models/PracticeQuestion');
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -61,6 +64,8 @@ app.use('/teacher', teacherRoutes);
 app.use('/student', studentRoutes);
 app.use('/result', resultRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/analytics', analyticsRoutes);
+app.use('/', practiceRoutes);
 
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI, {

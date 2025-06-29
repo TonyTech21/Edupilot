@@ -65,6 +65,12 @@
                         <a href="/result/approve" class="nav-link <%= currentPath.includes('/result/approve') ? 'active' : '' %>">
                             <i class="fas fa-check-circle"></i> Approve Results
                         </a>
+                        <a href="/analytics/performance-analytics" class="nav-link <%= currentPath.includes('/analytics/performance-analytics') ? 'active' : '' %>">
+                            <i class="fas fa-chart-bar"></i> Performance Analytics
+                        </a>
+                        <a href="/admin/post-practice-question" class="nav-link <%= currentPath.includes('/admin/post-practice-question') || currentPath.includes('/admin/practice-questions') ? 'active' : '' %>">
+                            <i class="fas fa-question-circle"></i> Practice Questions
+                        </a>
                         <a href="/admin/promote" class="nav-link <%= currentPath.includes('/admin/promote') ? 'active' : '' %>">
                             <i class="fas fa-level-up-alt"></i> Promote Students
                         </a>
@@ -97,6 +103,9 @@
                         </a>
                         <a href="/student/results" class="nav-link <%= currentPath.includes('/student/results') ? 'active' : '' %>">
                             <i class="fas fa-chart-line"></i> My Results
+                        </a>
+                        <a href="/student/practice" class="nav-link <%= currentPath.includes('/student/practice') ? 'active' : '' %>">
+                            <i class="fas fa-brain"></i> Smart Revision
                         </a>
                         <a href="/student/profile" class="nav-link <%= currentPath.includes('/student/profile') ? 'active' : '' %>">
                             <i class="fas fa-user"></i> Profile / Settings
